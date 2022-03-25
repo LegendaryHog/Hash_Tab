@@ -27,6 +27,7 @@ int Node_Delete_Aft (Node* node)
 
 int List_Dtor (Node* first)
 {
+    assert (first != NULL);
     while (Node_Delete_Aft (first) != ERR) {;}
     free (first);
     return NO_ERR;

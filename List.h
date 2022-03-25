@@ -3,17 +3,14 @@
 
 #include "common.h" 
 
-typedef int data_t;
-
-typedef struct Node {
-    data_t data;
-    struct Node* next;
-} Node;
-
 enum ERRORS {
     NO_ERR = 0,
     ERR = 1,
 };
+typedef struct Node {
+    data_t data;
+    struct Node* next;
+} Node;
 
 Node* List_Ctor       (void);
 int   List_Dtor       (Node* node);
