@@ -12,10 +12,10 @@ typedef struct Node {
     struct Node* next;
 } Node;
 
-Node* List_Ctor       (void);
-int   List_Dtor       (Node* node);
-Node* Node_Ins_Aft    (Node* last, data_t push);
-int   Node_Delete_Aft (Node* elem);
-int   List_Dump       (Node* node);
+Node* ListCtor      (void);
+int   ListDtor      (Node* node);
+Node* NodeInsAft    (Node* last, data_t push);
+int   NodeDeleteAft (Node* elem);
+int   ListDump      (Node* node);
 
 #endif

@@ -1,12 +1,18 @@
 #include "List.h"
 
-Node* List_Ctor (void)
+Node* ListCtor (void)
 {
     return (Node*) calloc (1, sizeof (Node));
 }
 
-Node* Node_Ins_Aft (Node* last, data_t push)
+Node* NodeIns_Aft (Node* last, data_t push)
 {
+    if (last == NULL)
+    {
+        Node* new = (Node*) calloc (1, sizeof (Node));
+        new->data = push;
+        return new;
+    }
     Node* new = (Node*) calloc (1, sizeof (Node));
     new->next = last->next;
     last->next = new;
@@ -14,7 +20,7 @@ Node* Node_Ins_Aft (Node* last, data_t push)
     return new;
 }
 
-int Node_Delete_Aft (Node* node)
+int NodeDeleteAft (Node* node)
 {
     if (node->next == NULL)
     {
@@ -25,10 +31,11 @@ int Node_Delete_Aft (Node* node)
     return NO_ERR;
 }
 
-int List_Dtor (Node* first)
+int ListDtor (Node* first)
 {
     assert (first != NULL);
     while (Node_Delete_Aft (first) != ERR) {;}
     free (first);
     return NO_ERR;
 }
+

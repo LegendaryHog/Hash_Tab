@@ -1,6 +1,6 @@
 #include "HTab.h"
 
-Htab* Htab_Ctor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2), int (*Add_Buf) (char* buffer))
+Htab* HtabCtor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2), int (*AddBuf) (char* buffer, size_t* ptrip))
 {
     Htab* htab = (Htab*) calloc (1, sizeof (Htab));
     htab->logfile = fopen ("logs/logfile.txt", "w");
@@ -33,12 +33,12 @@ Htab* Htab_Ctor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (d
     }
     htab->cmp      = cmp;
     htab->HashFunc = HashFunc;
-    htab->Add_Buf  = Add_Buf; 
+    htab->AddBuf  = AddBuf; 
     htab->ctorflag = 1;
     return htab;
 }
 
-int Htab_Dtor (Htab* htab)
+int HtabDtor (Htab* htab)
 {
     assert (htab != NULL);
     if (htab->ctorflag == 0)
@@ -50,11 +50,82 @@ int Htab_Dtor (Htab* htab)
     {
         if (htab->buck[i] != NULL)
         {
-            List_Dtor (htab->buck[i]);
+            ListDtor (htab->buck[i]);
         }
     }
     htab->ctorflag = 0;
     free (htab->buck);
     fclose (htab->logfile);
     return NO_ERR;
+}
+
+size_t SkipSpaces (char* text)
+{
+    size_t ip = 0;
+    while (text[ip] == ' ' || text[ip] == '\n' || text[ip] == '\r' || text[ip] == '\t')
+    {
+        ip++;
+    }
+    return ip;
+}
+
+int HtabFill (Htab* htab, char* buffer)
+{
+    size_t ip = 0;
+
+    while (buffer[ip] != NULL)
+    {
+        ip += SkipSpaces (buffer + ip);
+        data_t new = htab->AddBuf (buffer, &ip);
+        size_t hashnew = htab->HashFunc (new) % htab->capacity;
+        htab->buck[hashnew] = NodeInsAft (htab->buck[hashnew], new);
+        htab->size++;
+    }
+    return NO_ERR;
+}
+
+int HtabAdd (Htab* htab, data_t obj)
+{
+    szie_t hash = htab->HashFunc (obj) % hash->capacity;
+    htab->buck[hash] = NodeInsAft (htab->buck[hash], obj);
+    retrun NO_ERR;
+}
+
+void PrintHTab (Htab* htab, FILE* file)
+{
+    fprintf (file, "\tHTAB [label = \"Htab:\n %p | <BUCK> buck:\n %p | capacity:\n %zd | size:\n %zd | ", htab, htab->buck, htab->capacity, htab->size);
+    fprintf (file, "HashFunc:\n %p | cmp\n %p | AddBuf:\n %p | logfile:\n %p | ctorflag:\n %d\"]\n", htab->HashFunc, htab->cmp, htab->AddBuf, htab->logfile, htab->ctorflag);
+}
+
+void PrintBuck (Htab* htab, FILE* file)
+{
+    fprintf (file, "\tsubgraph {\n");
+    fprintf (file, "\t\trankdir = TB\n\t\tstyle = filled\n\t\tfillcolor = black\n\t\tlabel = \"<BUCK>buck:\n%p\"\n", htab->buck);
+    while (size_t i = 0; i < htab->capacity; i++)
+    {
+        fprintf (file, "\t\t BUCK_%zd[color = black, style = filled, fillcolor = white, label = \"{hash: %zd |<buck%zd> node:\n%p}\"]\n", i, i, i, htab->buck[i]);
+    }
+    fprintf (file, "\t}\n");
+}
+
+void PrintList (Node* start, size_t index, FILE* file)
+{
+    fprintf (file, "\t");
+}
+
+int GraphDump (Htab* htab)
+{
+    assert (htab != NULL);
+
+    FILE* graph = fopen ("logs/graph_dump.dot", "w");
+    fprintf (graph, "digraph G{\n");
+    fprintf (graph, "\trankdir=LR;\n");
+    fprintf (graph, "\tnode[color=\"red\",shape=record];\n");
+    PrintHtab (htab, graph);
+    PrintBuck (htab, graph);
+    fprintf (graph, "\tHTAB:BUCK -> BUCK");
+    for (size_t i = 0; i < htab->capacity; i++)
+    {
+        PrintList (htab->buck[i], i, graph);
+    }
 }

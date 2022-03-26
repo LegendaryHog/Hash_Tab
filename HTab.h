@@ -6,21 +6,28 @@
 typedef struct Htab {
     Node** buck;
     size_t capacity;
+    size_t size;
     size_t (*HashFunc) (data_t obj);
     int    (*cmp)      (data_t obj1, data_t obj2);
-    data_t (*Add_Buf)  (char* buffer);
+    data_t (*AddBuf)   (char* buffer, size_t* ptrip);
     FILE*  logfile;
     int    ctorflag;
 } Htab;
 
-Htab*  Htab_Ctor   (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2), data_t (*Add_Buf) (char* buffer));
+Htab*  HtabCtor   (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2), data_t (*AddBuf) (char* buffer, size_t* ptrip));
 
-int    Htab_Dtor   (Htab* htab);
+int    HtabDtor   (Htab* htab);
 
-data_t Htab_Find   (Htab* htab, data_t obj);
+int    HtabFill   (Htab* htab, char* buffer);
 
-int    Htab_Reszie (Htab* htab);
+data_t HtabFind   (Htab* htab, data_t obj);
 
-int    Htab_Add    (Htab* htab, data_t obj);    
+int    HtabReszie (Htab* htab);
+
+int    HtabAdd    (Htab* htab, data_t obj);
+
+size_t SkipSpaces (char* text); 
+
+int    Graph_Dump
 
 #endif
