@@ -1,6 +1,9 @@
 #include "HTab.h"
 
-Htab* HtabCtor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2), int (*AddBuf) (char* buffer, size_t* ptrip))
+size_t gdcounter = 0;
+
+Htab* HtabCtor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2),
+data_t (*AddBuf) (char* buffer, size_t* ptrip), void (*fprintelem) (FILE* file, data_t obj))
 {
     Htab* htab = (Htab*) calloc (1, sizeof (Htab));
     htab->logfile = fopen ("logs/logfile.txt", "w");
@@ -26,14 +29,20 @@ Htab* HtabCtor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (da
         fprintf (htab->logfile, "Pointer on hash count function is NULL\n");
         return NULL;
     }
-    else if (Fill == NULL)
+    else if (AddBuf == NULL)
     {
         fprintf (htab->logfile, "Pointer on filling function is NULL\n");
         return NULL;
     }
-    htab->cmp      = cmp;
-    htab->HashFunc = HashFunc;
-    htab->AddBuf  = AddBuf; 
+    else if (fprintelem == NULL)
+    {
+        fprintf (htab->logfile, "Pointer on printelem function is NULL");
+        return NULL;
+    }
+    htab->cmp       = cmp;
+    htab->HashFunc  = HashFunc;
+    htab->AddBuf    = AddBuf;
+    htab->fprintelem = fprintelem; 
     htab->ctorflag = 1;
     return htab;
 }
@@ -73,7 +82,7 @@ int HtabFill (Htab* htab, char* buffer)
 {
     size_t ip = 0;
 
-    while (buffer[ip] != NULL)
+    while (buffer[ip] != '\0')
     {
         ip += SkipSpaces (buffer + ip);
         data_t new = htab->AddBuf (buffer, &ip);
@@ -86,31 +95,51 @@ int HtabFill (Htab* htab, char* buffer)
 
 int HtabAdd (Htab* htab, data_t obj)
 {
-    szie_t hash = htab->HashFunc (obj) % hash->capacity;
+    size_t hash = htab->HashFunc (obj) % htab->capacity;
     htab->buck[hash] = NodeInsAft (htab->buck[hash], obj);
-    retrun NO_ERR;
+    htab->size++;
+    return NO_ERR;
 }
 
-void PrintHTab (Htab* htab, FILE* file)
+void PrintHtab (Htab* htab, FILE* file)
 {
-    fprintf (file, "\tHTAB [label = \"Htab:\n %p | <BUCK> buck:\n %p | capacity:\n %zd | size:\n %zd | ", htab, htab->buck, htab->capacity, htab->size);
-    fprintf (file, "HashFunc:\n %p | cmp\n %p | AddBuf:\n %p | logfile:\n %p | ctorflag:\n %d\"]\n", htab->HashFunc, htab->cmp, htab->AddBuf, htab->logfile, htab->ctorflag);
+    fprintf (file, "\tHTAB [label = \"Htab:\\n %p | <BUCK> buck:\\n %p | capacity:\\n %zd | size:\\n %zd | ", htab, htab->buck, htab->capacity, htab->size);
+    fprintf (file, "HashFunc:\\n %p | cmp\\n %p | AddBuf:\\n %p | logfile:\\n %p | ctorflag:\\n %d\"];\n", htab->HashFunc, htab->cmp, htab->AddBuf, htab->logfile, htab->ctorflag);
 }
 
 void PrintBuck (Htab* htab, FILE* file)
 {
-    fprintf (file, "\tsubgraph {\n");
-    fprintf (file, "\t\trankdir = TB\n\t\tstyle = filled\n\t\tfillcolor = black\n\t\tlabel = \"<BUCK>buck:\n%p\"\n", htab->buck);
-    while (size_t i = 0; i < htab->capacity; i++)
+    fprintf (file, "\tsubgraph BUCKET {\n");
+    fprintf (file, "\t\tBUCKET [color = black, label = \" <bucket>buck:\\n%p", htab->buck);
+    for (size_t i = 0; i < htab->capacity; i++)
     {
-        fprintf (file, "\t\t BUCK_%zd[color = black, style = filled, fillcolor = white, label = \"{hash: %zd |<buck%zd> node:\n%p}\"]\n", i, i, i, htab->buck[i]);
+        fprintf (file, " | {hash:\\n %zd |<buck%zd> node:\\n%p}", i, i, htab->buck[i]);
     }
-    fprintf (file, "\t}\n");
+    fprintf (file, "\"];\n\t}\n");
 }
 
-void PrintList (Node* start, size_t index, FILE* file)
+void PrintList (void (*fprintelem) (FILE* file, data_t obj), Node* start, size_t index, FILE* file)
 {
-    fprintf (file, "\t");
+    if (start == NULL)
+    {
+        return;
+    }
+    else
+    {
+        size_t i = 0;
+        for (Node* node = start; node != NULL; node = node->next)
+        {
+            fprintf (file, "\tNODE_%zd_%zd [label = \"<node%zd> node:\\n%p | elem:\\n", index, i, i, start);
+            fprintelem (file, start->data);
+            fprintf (file, " | <next%zd> next:\\n%p\"];\n", i, start->next);
+            i++;
+        }
+        fprintf (file, "\tBUCKET:buck%zd -> NODE_%zd_0:node0;\n", index, index);
+        for (size_t j = 0; j < i - 1; j++)
+        {
+            fprintf (file, "\tNODE_%zd_%zd:NEXT -> NODE_%zd_%zd:NODE;\n", index, j, index, j+1);
+        }
+    }
 }
 
 int GraphDump (Htab* htab)
@@ -123,9 +152,18 @@ int GraphDump (Htab* htab)
     fprintf (graph, "\tnode[color=\"red\",shape=record];\n");
     PrintHtab (htab, graph);
     PrintBuck (htab, graph);
-    fprintf (graph, "\tHTAB:BUCK -> BUCK");
+    fprintf (graph, "\tHTAB:BUCK -> BUCKET:bucket;\n");
     for (size_t i = 0; i < htab->capacity; i++)
     {
-        PrintList (htab->buck[i], i, graph);
+        PrintList (htab->fprintelem, htab->buck[i], i, graph);
     }
+    fprintf (graph, "}\n");
+    fclose (graph);
+    char* cmd_mes = (char*) calloc (LEN0 + gdcounter, sizeof (char));
+    sprintf (cmd_mes, "dot -Tpng logs/graph_dump.dot -o logs/Graph_Dump%zd.png", gdcounter);
+    system (cmd_mes);
+    free (cmd_mes);
+    //system ("rm logs/graph_dump.dot");
+    gdcounter++;
+    return NO_ERR;
 }

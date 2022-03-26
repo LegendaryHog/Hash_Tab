@@ -1,0 +1,11 @@
+digraph G{
+	rankdir=LR;
+	node[color="red",shape=record];
+	HTAB [label = "Htab:\n 0x7fffc75242a0 | <BUCK> buck:\n 0x7fffc75244d0 | capacity:\n 1 | size:\n 10 | HashFunc:\n 0x7fe0da547d0f | cmp\n 0x7fe0da547d21 | AddBuf:\n 0x7fe0da547d37 | logfile:\n 0x7fffc75242f0 | ctorflag:\n 1"];
+	subgraph BUCKET {
+		BUCKET [color = black, label = " <bucket>buck:\n0x7fffc75244d0 | {hash:\n 0 |<buck0> node:\n0x7fffc7524610}"];
+	}
+	HTAB:BUCK -> BUCKET:bucket;
+	NODE_0_0 [label = "<node0> node:\n0x7fffc7524610 | elem:\n19 | <next0> next:\n(nil)"];
+	BUCKET:buck0 -> NODE_0_0:node0;
+}

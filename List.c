@@ -5,7 +5,7 @@ Node* ListCtor (void)
     return (Node*) calloc (1, sizeof (Node));
 }
 
-Node* NodeIns_Aft (Node* last, data_t push)
+Node* NodeInsAft (Node* last, data_t push)
 {
     if (last == NULL)
     {
@@ -28,13 +28,14 @@ int NodeDeleteAft (Node* node)
     }
     Node* tmpnode = node->next;
     node->next = node->next->next;
+    free (tmpnode);
     return NO_ERR;
 }
 
 int ListDtor (Node* first)
 {
     assert (first != NULL);
-    while (Node_Delete_Aft (first) != ERR) {;}
+    while (NodeDeleteAft (first) != ERR) {;}
     free (first);
     return NO_ERR;
 }
