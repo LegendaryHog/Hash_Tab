@@ -11,14 +11,14 @@ typedef struct Htab {
     size_t size;
     size_t (*HashFunc)  (data_t obj);
     int    (*cmp)       (data_t obj1, data_t obj2);
-    data_t (*AddBuf)    (char* buffer, size_t* ptrip);
+    data_t (*ScanBuf)   (char* buffer, size_t* ptrip);
     void   (*fprintelem)(FILE* file, data_t obj);
     FILE*  logfile;
     int    ctorflag;
 } Htab;
 
 Htab*  HtabCtor   (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2),
-data_t (*AddBuf) (char* buffer, size_t* ptrip), void (*fprintelem) (FILE* file, data_t obj));
+data_t (*ScanBuf) (char* buffer, size_t* ptrip), void (*fprintelem) (FILE* file, data_t obj));
 
 int    HtabDtor   (Htab* htab);
 

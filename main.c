@@ -10,7 +10,7 @@ int cmp (data_t obj1, data_t obj2)
     return obj1 - obj2;
 }
 
-data_t AddBuf (char* buffer, size_t* ptrip)
+data_t ScanBuf (char* buffer, size_t* ptrip)
 {
     data_t new = 0;
     (*ptrip) += sscanf (buffer + *ptrip, "%d", &new);
@@ -26,7 +26,7 @@ void fprintelem (FILE* file, data_t obj)
 
 int main (void)
 {
-    Htab* htab = HtabCtor (1, HashFunc, cmp, AddBuf, fprintelem);
+    Htab* htab = HtabCtor (2, HashFunc, cmp, ScanBuf, fprintelem);
     for (int i = 0; i < 10; i++)
     {
         HtabAdd (htab, 10 + i);
