@@ -201,10 +201,28 @@ int HtabResize (Htab* htab)
                 NodeInsAft (newbuck[hash], obj);
             }
         }
+        if (htab->buck[i] != NULL)
+        {
+            ListDtor (htab->buck[i]);
+        }
     }
     htab->capacity = newcap;
     Node** tmpptr = htab->buck;
     htab->buck = newbuck;
     free (tmpptr);
     return NO_ERR;
+}
+
+int HtabFind (Htab* htab, data_t obj)
+{
+    size_t hash = htab->HashFunc (obj) % htab->capacity;
+    for (Node* node = htab->buck[hash]; node != NULL; node = node->next)
+    {
+        if (htab->cmp (obj, node->data) == 0)
+        {
+            obj = node->data;
+            return FIND;
+        }
+    }
+    return NOT_FIND;
 }

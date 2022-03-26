@@ -5,6 +5,11 @@
 #include "common.h"
 
 #define LEN0 55
+
+enum SEARCH {
+    FIND = 0xF15D,
+    NOT_FIND = 0x501F15D,
+};
 typedef struct Htab {
     Node** buck;
     size_t capacity;
@@ -24,7 +29,7 @@ int    HtabDtor   (Htab* htab);
 
 int    HtabFill   (Htab* htab, char* buffer);
 
-data_t HtabFind   (Htab* htab, data_t obj);
+int    HtabFind   (Htab* htab, data_t obj);
 
 int    HtabResize (Htab* htab);
 
