@@ -2,7 +2,7 @@
 
 size_t HashFunc (data_t obj)
 {
-    return 0*obj;
+    return obj;
 }
 
 int cmp (data_t obj1, data_t obj2)

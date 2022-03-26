@@ -26,7 +26,7 @@ int    HtabFill   (Htab* htab, char* buffer);
 
 data_t HtabFind   (Htab* htab, data_t obj);
 
-int    HtabReszie (Htab* htab);
+int    HtabResize (Htab* htab);
 
 int    HtabAdd    (Htab* htab, data_t obj);
 

@@ -65,6 +65,7 @@ int HtabDtor (Htab* htab)
     htab->ctorflag = 0;
     free (htab->buck);
     fclose (htab->logfile);
+    free (htab);
     return NO_ERR;
 }
 
@@ -92,6 +93,10 @@ int HtabFill (Htab* htab, char* buffer)
 
 int HtabAdd (Htab* htab, data_t obj) //Not work
 {
+    if (htab->size > htab->capacity / 2)
+    {
+        HtabResize (htab);
+    }
     size_t hash = htab->HashFunc (obj) % htab->capacity;
     if (htab->buck[hash] == NULL)
     {
@@ -133,9 +138,9 @@ void PrintList (void (*fprintelem) (FILE* file, data_t obj), Node* start, size_t
         size_t i = 0;
         for (Node* node = start; node != NULL; node = node->next)
         {
-            fprintf (file, "\tNODE_%zd_%zd [style = filled, fillcolor = lightblue, penwidth = 2.5, label = \"<node%zd> node:\\n%p | elem:\\n", index, i, i, node);
+            fprintf (file, "\tNODE_%zd_%zd [style = filled, fillcolor = lightblue, penwidth = 2.5, label = \"{<node%zd> node:\\n%p | elem:\\n", index, i, i, node);
             fprintelem (file, node->data);
-            fprintf (file, " | <next%zd> next:\\n%p\"];\n", i, node->next);
+            fprintf (file, " | <next%zd> next:\\n%p}\"];\n", i, node->next);
             i++;
         }
         fprintf (file, "\tBUCKET:buck%zd -> NODE_%zd_0:node0[dir = both, arrowtail = dot];\n", index, index);
@@ -173,5 +178,33 @@ int GraphDump (Htab* htab)
     free (cmd_mes);
     //system ("rm logs/graph_dump.dot");
     gdcounter++;
+    return NO_ERR;
+}
+
+int HtabResize (Htab* htab)
+{
+    size_t newcap  = htab->capacity * 2;
+    Node** newbuck = (Node**) calloc (newcap, sizeof (Node*));
+
+    for (size_t i = 0; i < htab->capacity; i++)
+    {
+        for (Node* node = htab->buck[i]; node != NULL; node = node->next)
+        {
+            data_t obj = node->data;
+            size_t hash = htab->HashFunc (obj) % newcap;
+            if (newbuck[hash] == NULL)
+            {
+                newbuck[hash] = NodeInsAft (newbuck[hash], obj);
+            }
+            else
+            {
+                NodeInsAft (newbuck[hash], obj);
+            }
+        }
+    }
+    htab->capacity = newcap;
+    Node** tmpptr = htab->buck;
+    htab->buck = newbuck;
+    free (tmpptr);
     return NO_ERR;
 }
