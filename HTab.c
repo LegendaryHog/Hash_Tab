@@ -87,7 +87,7 @@ size_t SkipSpaces (char* text)
 
 int HtabAdd (Htab* htab, data_t obj) //Not work
 {
-    if (htab->size > htab->capacity / 2)
+    if (htab->size > 7 * htab->capacity / 10)
     {
         HtabResize (htab);
     }
@@ -137,7 +137,7 @@ void PrintList (void (*fprintelem) (FILE* file, data_t obj), Node* start, size_t
             fprintf (file, " | <next%zd> next:\\n%p}\"];\n", i, node->next);
             i++;
         }
-        fprintf (file, "\tBUCKET:buck%zd -> NODE_%zd_0:node0[dir = both, arrowtail = dot];\n", index, index);
+        fprintf (file, "\tBUCKET:buck%zd -> NODE_%zd_0:node0:w[dir = both, arrowtail = dot];\n", index, index);
         fprintf (file, "\tBUCKET:buck%zd -> NODE_%zd_0[color = invis];\n", index, index);
         for (size_t j = 0; j < i - 1; j++)
         {
@@ -170,7 +170,7 @@ int GraphDump (Htab* htab)
     sprintf (cmd_mes, "dot -Tpng logs/graph_dump.dot -o logs/Graph_Dump%zd.png", gdcounter);
     system (cmd_mes);
     free (cmd_mes);
-    //system ("rm logs/graph_dump.dot");
+    system ("rm logs/graph_dump.dot");
     gdcounter++;
     return NO_ERR;
 }
