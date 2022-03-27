@@ -35,4 +35,6 @@ Too use this repository as library delete directory `problem/` and directory `Te
 If your text so big as my arrears graphviz dump exit with error and will not done. In example, in Hamlet.
 
 ## My beatiful GraphDump UwU.
-[!A](https://github.com/LegendaryHog/Hash_Tab/blob/master/logs/Graph_Dump0.png)
+Graphviz Dump
+
+![Graphviz Dump](https://github.com/LegendaryHog/Hash_Tab/blob/master/logs/Graph_Dump0.png)
