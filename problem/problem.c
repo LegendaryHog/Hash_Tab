@@ -91,6 +91,7 @@ size_t power (char base, char pow)
 
 size_t HashFunc (data_t obj)
 {
+    /*
     size_t len = strlen (obj->word);
     size_t num = 0;
     for (size_t i = 0; i < len; i++)
@@ -99,6 +100,17 @@ size_t HashFunc (data_t obj)
         num += power (ch, 21 * ch);
     }
     return 3 * len * num / 2;
+    */
+   int length = 0;
+   unsigned hash_key = 5381;
+   while (*obj->word != '\0')
+   {
+       hash_key = ((hash_key << 5) + hash_key) + *obj->word;
+       obj->word++;
+       length++;
+   }
+   obj->word -= length;
+   return hash_key;
 }
 
 int cmp (data_t obj1, data_t obj2)
