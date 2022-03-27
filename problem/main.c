@@ -11,12 +11,11 @@ int main (int argc, char* argv[])
 
     Node* lofstr = HtabFill (htab, buffer, (size_t) bufsz);
 
-    printf ("%zd\n", Count (htab, "golden"));
-    printf ("%zd\n", Count (htab, "word"));
-    printf ("%zd\n", Count (htab, ""));
-    printf ("%zd\n", Count (htab, " "));
-    printf ("%zd\n", Count (htab, NULL));
-
+    for (char* instr = Input (); instr != NULL; instr = Input ())
+    {
+        printf ("word \"%s\" occurs %zd time/s in text\n", instr, Count (htab, instr));
+        free (instr);
+    }
     if (argv[argc - 2] != NULL && strcmp (argv[argc - 2], "--graph-dump=yes") == 0)
     {
         printf ("Flag: --graph-dump=yes\n");

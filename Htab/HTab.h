@@ -1,8 +1,8 @@
 #ifndef HTABH
 #define HTABH
 
-#include "common.h"
-#include "List.h"
+#include "../common.h"
+#include "../List/List.h"
 
 #define LEN0 55
 typedef struct Htab {

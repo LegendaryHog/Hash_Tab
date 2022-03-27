@@ -148,3 +148,18 @@ size_t Count (Htab* htab, char* word)
         return (*ptrfind)->counter;
     }
 }
+
+char* Input (void)
+{
+    char* instr = NULL;
+    size_t size = 0;
+    printf ("Print word: ");
+    getline (&instr, &size, stdin);
+    instr[strlen(instr) - 1] = '\0';
+    if (strcmp (instr, "--exit") == 0)
+    {
+        free (instr);
+        return NULL;
+    }
+    return instr;
+}

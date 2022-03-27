@@ -1,7 +1,7 @@
 #ifndef LISTH
 #define LISTH
 
-#include "common.h" 
+#include "../common.h" 
 
 enum ERRORS {
     NO_ERR = 0,

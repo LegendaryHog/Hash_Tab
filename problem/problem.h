@@ -1,9 +1,11 @@
 #ifndef PROBLEMH
 #define PROBLEMH
 
-#include "HTab.h"
+#include "../Htab/HTab.h"
 
 size_t  Count         (Htab* htab, char* word);
+
+char*   Input         (void);
 
 size_t  HashFunc      (data_t obj);
 
