@@ -32,7 +32,7 @@ Too use this repository as library delete directory `problem/` and directory `Te
 
 ## Trouble with Grapviz Dump.
 
-If your text so big as my arrears graphviz dump exit with error and will not done. In example, in Hamlet.
+If your text as big as my arrears graphviz dump exit with error and will not done. In example, in Hamlet.
 
 ## My beatiful GraphDump UwU.
 Graphviz Dump
