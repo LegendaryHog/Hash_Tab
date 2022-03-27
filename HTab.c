@@ -3,7 +3,7 @@
 size_t gdcounter = 0;
 
 Htab* HtabCtor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2),
-data_t (*ScanBuf) (char* buffer, size_t* ptrip), void (*fprintelem) (FILE* file, data_t obj))
+void (*fprintelem) (FILE* file, data_t obj))
 {
     Htab* htab = (Htab*) calloc (1, sizeof (Htab));
     htab->logfile = fopen ("logs/logfile.txt", "w");
@@ -29,11 +29,6 @@ data_t (*ScanBuf) (char* buffer, size_t* ptrip), void (*fprintelem) (FILE* file,
         fprintf (htab->logfile, "Pointer on hash count function is NULL\n");
         return NULL;
     }
-    else if (ScanBuf == NULL)
-    {
-        fprintf (htab->logfile, "Pointer on filling function is NULL\n");
-        return NULL;
-    }
     else if (fprintelem == NULL)
     {
         fprintf (htab->logfile, "Pointer on printelem function is NULL");
@@ -41,7 +36,6 @@ data_t (*ScanBuf) (char* buffer, size_t* ptrip), void (*fprintelem) (FILE* file,
     }
     htab->cmp       = cmp;
     htab->HashFunc  = HashFunc;
-    htab->ScanBuf    = ScanBuf;
     htab->fprintelem = fprintelem; 
     htab->ctorflag = 1;
     return htab;
@@ -79,7 +73,7 @@ size_t SkipSpaces (char* text)
     return ip;
 }
 
-int HtabFill (Htab* htab, char* buffer)
+/*int HtabFill (Htab* htab, char* buffer)
 {
     size_t ip = 0;
 
@@ -89,7 +83,7 @@ int HtabFill (Htab* htab, char* buffer)
         HtabAdd (htab, htab->ScanBuf (buffer, &ip));
     }
     return NO_ERR;
-}
+}*/
 
 int HtabAdd (Htab* htab, data_t obj) //Not work
 {
@@ -113,7 +107,7 @@ int HtabAdd (Htab* htab, data_t obj) //Not work
 void PrintHtab (Htab* htab, FILE* file)
 {
     fprintf (file, "\tHTAB [color = darkmagenta, style = filled, fillcolor = aqua, penwidth=3.0,  label = \"Htab:\\n %p | <BUCK> buck:\\n %p | capacity:\\n %zd | size:\\n %zd | ", htab, htab->buck, htab->capacity, htab->size);
-    fprintf (file, "HashFunc:\\n %p | cmp:\\n %p | ScanBuf:\\n %p | logfile:\\n %p | ctorflag:\\n %d\"];\n", htab->HashFunc, htab->cmp, htab->ScanBuf, htab->logfile, htab->ctorflag);
+    fprintf (file, "HashFunc:\\n %p | cmp:\\n %p | logfile:\\n %p | ctorflag:\\n %d\"];\n", htab->HashFunc, htab->cmp, htab->logfile, htab->ctorflag);
 }
 
 void PrintBuck (Htab* htab, FILE* file)
@@ -213,16 +207,15 @@ int HtabResize (Htab* htab)
     return NO_ERR;
 }
 
-int HtabFind (Htab* htab, data_t obj)
+data_t* HtabFind (Htab* htab, data_t obj)
 {
     size_t hash = htab->HashFunc (obj) % htab->capacity;
     for (Node* node = htab->buck[hash]; node != NULL; node = node->next)
     {
         if (htab->cmp (obj, node->data) == 0)
         {
-            obj = node->data;
-            return FIND;
+            return &(node->data);
         }
     }
-    return NOT_FIND;
+    return NULL;
 }
