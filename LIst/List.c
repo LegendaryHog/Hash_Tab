@@ -1,5 +1,6 @@
 #include "List.h"
 
+
 Node* ListCtor (void)
 {
     return (Node*) calloc (1, sizeof (Node));
