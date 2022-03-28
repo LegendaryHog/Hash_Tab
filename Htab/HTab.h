@@ -5,8 +5,14 @@
 #include "../List/List.h"
 
 #define LEN0 55
+
+typedef struct buck_t {
+    Node*  fnode;
+    size_t size;
+} buck_t;
 typedef struct Htab {
-    Node** buck;
+    buck_t* buck;
+    Node*   list;
     size_t capacity;
     size_t size;
     size_t (*HashFunc)  (data_t obj);
