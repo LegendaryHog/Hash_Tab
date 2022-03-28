@@ -206,7 +206,7 @@ int HtabResize (Htab* htab)
     return NO_ERR;*/
     htab->capacity *= 2;
     htab->buck = (buck_t*) realloc (htab->buck, htab->capacity * sizeof (buck_t));
-    for (size_t i = 0; i < sizeof (buck_t) * htab->capacity / 2; i++)
+    for (size_t i = 0; i < sizeof (buck_t) * htab->capacity; i++)
     {
         ((char*)htab->buck)[i] = 0;
     }
