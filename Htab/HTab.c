@@ -166,7 +166,7 @@ int GraphDump (Htab* htab)
     fprintf (graph, "}\n");
     fclose (graph);
     char* cmd_mes = (char*) calloc (LEN0 + gdcounter, sizeof (char));
-    sprintf (cmd_mes, "dot -Teps logs/graph_dump.dot -o logs/Graph_Dump%zd.eps", gdcounter);
+    sprintf (cmd_mes, "dot -Tpng logs/graph_dump.dot -o logs/Graph_Dump%zd.png", gdcounter);
     system (cmd_mes);
     free (cmd_mes);
     system ("rm logs/graph_dump.dot");
@@ -176,34 +176,6 @@ int GraphDump (Htab* htab)
 
 int HtabResize (Htab* htab)
 {
-    /*size_t newcap  = htab->capacity * 2;
-    Node** newbuck = (Node**) calloc (newcap, sizeof (Node*));
-
-    for (size_t i = 0; i < htab->capacity; i++)
-    {
-        for (Node* node = htab->buck[i]; node != NULL; node = node->next)
-        {
-            data_t obj = node->data;
-            size_t hash = htab->HashFunc (obj) % newcap;
-            if (newbuck[hash] == NULL)
-            {
-                newbuck[hash] = NodeInsAft (newbuck[hash], obj);
-            }
-            else
-            {
-                NodeInsAft (newbuck[hash], obj);
-            }
-        }
-        if (htab->buck[i] != NULL)
-        {
-            ListDtor (htab->buck[i]);
-        }
-    }
-    htab->capacity = newcap;
-    Node** tmpptr = htab->buck;
-    htab->buck = newbuck;
-    free (tmpptr);
-    return NO_ERR;*/
     htab->capacity *= 2;
     htab->buck = (buck_t*) realloc (htab->buck, htab->capacity * sizeof (buck_t));
     for (size_t i = 0; i < sizeof (buck_t) * htab->capacity; i++)
