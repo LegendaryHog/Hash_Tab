@@ -37,4 +37,4 @@ If your text as big as my arrears graphviz dump exit with error and will not don
 ## My beatiful GraphDump UwU.
 Graphviz Dump
 
-![Graphviz Dump](https://github.com/LegendaryHog/Hash_Tab/blob/OneList/logs/Graph_Dump0.eps)
+![Graphviz Dump](https://github.com/LegendaryHog/Hash_Tab/blob/OneList/logs/Graph_Dump0.png)
