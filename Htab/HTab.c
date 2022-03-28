@@ -113,7 +113,7 @@ void PrintBuck (Htab* htab, FILE* file)
     fprintf (file, "\t\tBUCKET [style = filled, fillcolor = green, penwidth=3.0, color = black, label = \" <bucket> buck:\\n%p", htab->buck);
     for (size_t i = 0; i < htab->capacity; i++)
     {
-        fprintf (file, " |{ hash:\\n %zd |<buck%zd> node:\\n%p size:\\n%zd}", i, i, htab->buck[i].fnode, htab->buck[i].size);
+        fprintf (file, " |{ hash:\\n %zd |<buck%zd> node: %p size: %zd}", i, i, htab->buck[i].fnode, htab->buck[i].size);
     }
     fprintf (file, "\"];\n\t}\n");
 }
