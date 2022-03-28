@@ -91,12 +91,10 @@ size_t power (char base, char pow)
 
 size_t HashFunc (data_t obj)
 {
-    int length = 0;
     unsigned hash_key = 5381;
     for (size_t i = 0; obj->word[i] != '\0'; i++)
     {
         hash_key = ((hash_key << 5) + hash_key) + my_tolower(obj->word[i]);
-        length++;
     }
     return hash_key;
 }
