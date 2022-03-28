@@ -2,6 +2,7 @@
 
 size_t gdcounter = 0;
 
+
 Htab* HtabCtor (size_t capacity, size_t (*HashFunc) (data_t obj), int (*cmp) (data_t obj1, data_t obj2),
 void (*fprintelem) (FILE* file, data_t obj))
 {
