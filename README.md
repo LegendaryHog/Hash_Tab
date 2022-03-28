@@ -1,6 +1,6 @@
 # Hash table
 
-## How clone?
+## How to clone?
 ```
 git clone https://github.com/LegendaryHog/Hash_Tab
 ```
