@@ -8,8 +8,11 @@ int main (int argc, char* argv[])
     NormalizeWords (buffer);
 
     Htab* htab = HtabCtor (16, HashFunc, cmp, fprintelem);
-
+    clock_t start = clock ();
     Node* lofstr = HtabFill (htab, buffer, (size_t) bufsz);
+    clock_t end = clock ();
+    printf ("Filling time: %zd\n", (size_t)(end - start));
+
 
     for (char* instr = Input (); instr != NULL; instr = Input ())
     {

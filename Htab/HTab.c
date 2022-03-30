@@ -53,6 +53,13 @@ int HtabDtor (Htab* htab)
     }
     ListDtor (htab->list);
     htab->ctorflag = 0;
+    for (size_t i = 0; i < htab->capacity; i++)
+    {
+        if (htab->buck[i] != NULL)
+        {
+            free (htab->buck[i]);
+        }
+    }
     free (htab->buck);
     fclose (htab->logfile);
     free (htab);
@@ -88,15 +95,16 @@ int HtabAdd (Htab* htab, data_t obj)
         HtabResize (htab);
     }
     size_t hash = htab->HashFunc (obj) % htab->capacity;
-    if (htab->buck[hash].fnode == NULL)
+    if (htab->buck[hash] == NULL)
     {
-        htab->buck[hash].fnode = NodeInsAft (htab->list, obj);
+        htab->buck[hash] = (buck_t) calloc (1, sizeof (struct inlist));
+        htab->buck[hash]->fnode = NodeInsAft (htab->list, obj);
     }
     else
     {
-        NodeInsAft (htab->buck[hash].fnode, obj);
+        NodeInsAft (htab->buck[hash]->fnode, obj);
     }
-    htab->buck[hash].size++;
+    htab->buck[hash]->size++;
     htab->size++;
     return NO_ERR;
 }
@@ -113,7 +121,7 @@ void PrintBuck (Htab* htab, FILE* file)
     fprintf (file, "\t\tBUCKET [style = filled, fillcolor = green, penwidth=3.0, color = black, label = \" <bucket> buck:\\n%p", htab->buck);
     for (size_t i = 0; i < htab->capacity; i++)
     {
-        fprintf (file, " |{ hash:\\n %zd |<buck%zd> node: %p size: %zd}", i, i, htab->buck[i].fnode, htab->buck[i].size);
+        fprintf (file, " |{ hash:\\n %zd |<buck%zd> node: %p size: %zd}", i, i, htab->buck[i]->fnode, htab->buck[i]->size);
     }
     fprintf (file, "\"];\n\t}\n");
 }
@@ -130,7 +138,7 @@ void PrintList (void (*fprintelem) (FILE* file, data_t obj), Node* start, size_t
         size_t k = 0;
         for (Node* node = start; k < size; node = node->next)
         {
-            fprintf (file, "\tNODE_%zd_%zd [style = filled, fillcolor = lightblue, penwidth = 2.5, label = \"{<node%zd> node:\\n%p | elem:\\n", index, i, i, node);
+            fprintf (file, "\tNODE_%zd_%zd [style = filled, fillcolor = lightblue, penwidth = 2->5, label = \"{<node%zd> node:\\n%p | elem:\\n", index, i, i, node);
             fprintelem (file, node->data);
             fprintf (file, " | <next%zd> next:\\n%p}\"];\n", i, node->next);
             i++;
@@ -161,12 +169,12 @@ int GraphDump (Htab* htab)
     fprintf (graph, "\tHTAB:BUCK -> BUCKET:bucket[dir = both, arrowtail = dot, color = darkmagenta];\n");
     for (size_t i = 0; i < htab->capacity; i++)
     {
-        PrintList (htab->fprintelem, htab->buck[i].fnode, htab->buck[i].size, i, graph);
+        PrintList (htab->fprintelem, htab->buck[i]->fnode, htab->buck[i]->size, i, graph);
     }
     fprintf (graph, "}\n");
     fclose (graph);
     char* cmd_mes = (char*) calloc (LEN0 + gdcounter, sizeof (char));
-    sprintf (cmd_mes, "dot -Tpng logs/graph_dump.dot -o logs/Graph_Dump%zd.png", gdcounter);
+    sprintf (cmd_mes, "dot -Tpng logs/graph_dump->dot -o logs/Graph_Dump%zd.png", gdcounter);
     system (cmd_mes);
     free (cmd_mes);
     system ("rm logs/graph_dump.dot");
@@ -176,6 +184,13 @@ int GraphDump (Htab* htab)
 
 int HtabResize (Htab* htab)
 {
+    for (size_t i = 0; i < htab->capacity; i++)
+    {
+        if (htab->buck[i] != NULL)
+        {
+            free (htab->buck[i]);
+        }
+    }
     htab->capacity *= 2;
     htab->buck = (buck_t*) realloc (htab->buck, htab->capacity * sizeof (buck_t));
     for (size_t i = 0; i < sizeof (buck_t) * htab->capacity; i++)
@@ -197,7 +212,11 @@ data_t* HtabFind (Htab* htab, data_t obj)
 {
     size_t hash = htab->HashFunc (obj) % htab->capacity;
     size_t i = 0;
-    for (Node* node = htab->buck[hash].fnode; i < htab->buck[hash].size; node = node->next)
+    if (htab->buck[hash] == NULL)
+    {
+        return NULL;
+    }
+    for (Node* node = htab->buck[hash]->fnode; i < htab->buck[hash]->size; node = node->next)
     {
         if (htab->cmp (obj, node->data) == 0)
         {

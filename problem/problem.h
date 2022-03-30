@@ -2,6 +2,7 @@
 #define PROBLEMH
 
 #include "../Htab/HTab.h"
+#include "time.h"
 
 size_t  Count         (Htab* htab, char* word);
 

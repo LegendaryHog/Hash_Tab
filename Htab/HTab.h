@@ -6,10 +6,12 @@
 
 #define LEN0 55
 
-typedef struct buck_t {
+struct inlist {
     Node*  fnode;
     size_t size;
-} buck_t;
+};
+typedef struct inlist* buck_t;
+
 typedef struct Htab {
     buck_t* buck;
     Node*   list;
