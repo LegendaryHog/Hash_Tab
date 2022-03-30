@@ -1,0 +1,6 @@
+digraph G{
+	rankdir=LR;
+	node[color="red",shape=record];
+	HTAB [color = darkmagenta, style = filled, fillcolor = aqua, penwidth=3.0,  label = "Htab:\n 0x4a4e780 | <BUCK> buck:\n 0x4a8b1a0 | capacity:\n 2048 | size:\n 1115 | HashFunc:\n 0x10a4bc | cmp:\n 0x10a533 | logfile:\n 0x4a4e810 | ctorflag:\n 1"];
+	subgraph BUCKET {
+		BUCKET [style = filled, fillcolor = green, penwidth=3.0, color = black, label = " <bucket> buck:\n0x4a8b1a0
