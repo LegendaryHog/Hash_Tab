@@ -90,7 +90,7 @@ size_t SkipSpaces (char* text)
 
 int HtabAdd (Htab* htab, data_t obj)
 {
-    if (htab->size > 7 * htab->capacity / 10)
+    if (htab->size >  htab->capacity / 2)
     {
         HtabResize (htab);
     }
@@ -141,7 +141,7 @@ void PrintList (void (*fprintelem) (FILE* file, data_t obj), Node* start, size_t
         size_t k = 0;
         for (Node* node = start; k < size; node = node->next)
         {
-            fprintf (file, "\tNODE_%zd_%zd [style = filled, fillcolor = lightblue, penwidth = 2->5, label = \"{<node%zd> node:\\n%p | elem:\\n", index, i, i, node);
+            fprintf (file, "\tNODE_%zd_%zd [style = filled, fillcolor = lightblue, penwidth = 2.5, label = \"{<node%zd> node:\\n%p | elem:\\n", index, i, i, node);
             fprintelem (file, node->data);
             fprintf (file, " | <next%zd> next:\\n%p}\"];\n", i, node->next);
             i++;
@@ -172,15 +172,16 @@ int GraphDump (Htab* htab)
     fprintf (graph, "\tHTAB:BUCK -> BUCKET:bucket[dir = both, arrowtail = dot, color = darkmagenta];\n");
     for (size_t i = 0; i < htab->capacity; i++)
     {
-        PrintList (htab->fprintelem, htab->buck[i]->fnode, htab->buck[i]->size, i, graph);
+        if (htab->buck[i] != NULL)
+            PrintList (htab->fprintelem, htab->buck[i]->fnode, htab->buck[i]->size, i, graph);
     }
     fprintf (graph, "}\n");
     fclose (graph);
     char* cmd_mes = (char*) calloc (LEN0 + gdcounter, sizeof (char));
-    sprintf (cmd_mes, "dot -Tpng logs/graph_dump->dot -o logs/Graph_Dump%zd.png", gdcounter);
+    sprintf (cmd_mes, "dot -Tpng logs/graph_dump.dot -o logs/Graph_Dump%zd.png", gdcounter);
     system (cmd_mes);
     free (cmd_mes);
-    system ("rm logs/graph_dump.dot");
+    //system ("rm logs/graph_dump.dot");
     gdcounter++;
     return NO_ERR;
 }
