@@ -181,7 +181,7 @@ int GraphDump (Htab* htab)
     sprintf (cmd_mes, "dot -Tpng logs/graph_dump.dot -o logs/Graph_Dump%zd.png", gdcounter);
     system (cmd_mes);
     free (cmd_mes);
-    //system ("rm logs/graph_dump.dot");
+    system ("rm logs/graph_dump.dot");
     gdcounter++;
     return NO_ERR;
 }
